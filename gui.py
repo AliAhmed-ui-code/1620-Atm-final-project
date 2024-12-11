@@ -118,8 +118,6 @@ class Gui:
         except ValueError:
             messagebox.showerror("Invalid Input", "Pin must only be numbers and 4 characters long")
             self.pin_entry.delete(0, END)
-        except FileNotFoundError:
-            self.welcome_label.config(text="Error: PIN file not found!", fg="red")
         except NameError:
             messagebox.showerror("Invalid Input", "Please enter your information again")
             self.first_name_entry.delete(0, END)
@@ -163,6 +161,8 @@ class Gui:
                     if entered_pin == row['PIN'] and first_name == row['First Name'] and last_name == row['Last Name']:
                         balance = float(row[balance_type])  # Get the current balance
                         if status == 1:  # Withdraw
+                            if amount > balance:
+                                raise ValueError
                             new_balance = withdraw(balance, amount)
                         elif status == 2:  # Deposit
                             new_balance = deposit(balance, amount)
@@ -194,14 +194,15 @@ class Gui:
         except ValueError:
             messagebox.showerror("Invalid Input", "Invalid amount entered.")
             self.amount_entry.delete(0, END)
+            self.var1.set(0)
+            self.var2.set(0)
+            self.radio_answer.set(0)
         except NameError:
             messagebox.showerror("Error", "Please choose a bank account.")
         except TypeError:
             messagebox.showerror("Error", "Please select an action.")
         except LookupError:
             messagebox.showerror("Error", "User not found. Please try again.")
-        except FileNotFoundError:
-            messagebox.showerror("Error", "Banking information file not found!")
         #source for messageboxes: https://stackoverflow.com/questions/2963263/how-can-i-create-a-simple-message-box-in-python
     def leave(self)->None:
         """
